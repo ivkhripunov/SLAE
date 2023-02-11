@@ -16,7 +16,7 @@ public:
     Type second_element;
     Type third_element;
 
-    constexpr Trio(Type first_value, Type second_value, Type third_value) : first_element(first_value),
+    Trio(Type first_value, Type second_value, Type third_value) : first_element(first_value),
                                                                             second_element(second_value),
                                                                             third_element(third_value) {}
 
@@ -29,7 +29,7 @@ private:
     size_t size_;
 
 public:
-    constexpr TridiagonalMatrix(const std::vector<Type> &lower_diagonal,
+    TridiagonalMatrix(const std::vector<Type> &lower_diagonal,
                                 const std::vector<Type> &main_diagonal,
 
                                 const std::vector<Type> &upper_diagonal) {
@@ -40,11 +40,11 @@ public:
 
         for (std::size_t i = 0; i < size_; ++i) {
             Trio tmp(lower_diagonal[i], main_diagonal[i], upper_diagonal[i]);
-            matrix[i] = tmp;
+            matrix.push_back(tmp);
         }
     }
 
-    constexpr TridiagonalMatrix(std::initializer_list<Type> &init_lower_diagonal,
+    TridiagonalMatrix(std::initializer_list<Type> &init_lower_diagonal,
                                 std::initializer_list<Type> &init_main_diagonal,
                                 std::initializer_list<Type> &init_upper_diagonal) {
 

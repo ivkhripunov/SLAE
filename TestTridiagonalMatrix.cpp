@@ -4,6 +4,7 @@
 
 #include "TridiagonalMatrixSolver.h"
 
+
 int main() {
     std::vector<double> a = {666, 666, 666, 666, 666};
     std::vector<double> b = {666, 666, 666, 666, 666};
