@@ -13,16 +13,12 @@ std::vector<Type> solve_tridiagonal(const TridiagonalMatrix<Type> &matrix, const
     size_t size_ = matrix.size();
     std::vector<Type> result(size_);
 
-    if (matrix.size() != right_hand_column.size()) {
-        std::cout << "different sizes";
-    } else {
-        std::vector<Type> p_values(size_);
+    std::vector<Type> p_values(size_);
 
-        calc_coeffs(matrix, right_hand_column, p_values, result);
+    calc_coeffs(matrix, right_hand_column, p_values, result);
 
-        for (int i = size_ - 2; i >= 0; --i) {
-            result[i] = p_values[i] * result[i + 1] + result[i];
-        }
+    for (int i = size_ - 2; i >= 0; --i) {
+        result[i] = p_values[i] * result[i + 1] + result[i];
     }
     return result;
 }
@@ -36,7 +32,8 @@ void calc_coeffs(const TridiagonalMatrix<Type> &Matrix, const std::vector<Type> 
 
     for (size_t i = 0; i < Matrix.size() - 1; ++i) {
         p_coeffs[i + 1] =
-                -Matrix[i + 1].third_element / (Matrix[i + 1].first_element * p_coeffs[i] + Matrix[i + 1].second_element);
+                -Matrix[i + 1].third_element /
+                (Matrix[i + 1].first_element * p_coeffs[i] + Matrix[i + 1].second_element);
 
         q_coeffs[i + 1] =
                 (right_hand_column[i + 1] - Matrix[i + 1].first_element * q_coeffs[i]) /
