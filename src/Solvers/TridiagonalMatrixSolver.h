@@ -17,13 +17,11 @@ std::vector<Type> solve_tridiagonal(const TridiagonalMatrix<Type> &matrix, const
         std::cout << "different sizes";
     } else {
         std::vector<Type> p_values(size_);
-        std::vector<Type> q_values(size_);
 
-        calc_coeffs(matrix, right_hand_column, p_values, q_values);
+        calc_coeffs(matrix, right_hand_column, p_values, result);
 
-        result[size_ - 1] = q_values[size_ - 1];
         for (int i = size_ - 2; i >= 0; --i) {
-            result[i] = p_values[i] * result[i + 1] + q_values[i];
+            result[i] = p_values[i] * result[i + 1] + result[i];
         }
     }
     return result;
