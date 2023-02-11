@@ -2,7 +2,7 @@
 // Created by ivankhripunov on 10.02.23.
 //
 
-#include "../Solvers/TridiagonalMatrixSolver.h"
+#include "../src/Solvers/TridiagonalMatrixSolver.h"
 
 
 int main() {
