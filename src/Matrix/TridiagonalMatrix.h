@@ -17,8 +17,22 @@ public:
     Type third_element;
 
     Trio(Type first_value, Type second_value, Type third_value) : first_element(first_value),
-                                                                            second_element(second_value),
-                                                                            third_element(third_value) {}
+                                                                  second_element(second_value),
+                                                                  third_element(third_value) {}
+
+    [[nodiscard]] Type operator[](std::size_t i) const {
+        switch (i) {
+            case 0:
+                return first_element;
+            case 1:
+                return second_element;
+            case 2:
+                return third_element;
+            default:
+                return;
+        }
+
+    }
 
 };
 
@@ -30,9 +44,9 @@ private:
 
 public:
     TridiagonalMatrix(const std::vector<Type> &lower_diagonal,
-                                const std::vector<Type> &main_diagonal,
+                      const std::vector<Type> &main_diagonal,
 
-                                const std::vector<Type> &upper_diagonal) {
+                      const std::vector<Type> &upper_diagonal) {
 
         size_ = main_diagonal.size();
 
@@ -45,8 +59,8 @@ public:
     }
 
     TridiagonalMatrix(std::initializer_list<Type> &init_lower_diagonal,
-                                std::initializer_list<Type> &init_main_diagonal,
-                                std::initializer_list<Type> &init_upper_diagonal) {
+                      std::initializer_list<Type> &init_main_diagonal,
+                      std::initializer_list<Type> &init_upper_diagonal) {
 
         size_ = init_main_diagonal.size();
 
