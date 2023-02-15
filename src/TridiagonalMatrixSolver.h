@@ -5,7 +5,7 @@
 #ifndef SLAE_TRIDIAGONALMATRIXSOLVER_H
 #define SLAE_TRIDIAGONALMATRIXSOLVER_H
 
-#include "../Matrix/TridiagonalMatrix.h"
+#include "TridiagonalMatrix.h"
 
 template<typename Type>
 std::vector<Type> solve_tridiagonal(const TridiagonalMatrix<Type> &matrix, const std::vector<Type> &right_hand_column) {

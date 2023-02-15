@@ -16,9 +16,9 @@ public:
     Type second_element;
     Type third_element;
 
-    Trio(const Type& first_value, const Type& second_value, const Type& third_value) : first_element(first_value),
-                                                                  second_element(second_value),
-                                                                  third_element(third_value) {}
+    Trio(const Type &first_value, const Type &second_value, const Type &third_value) : first_element(first_value),
+                                                                                       second_element(second_value),
+                                                                                       third_element(third_value) {}
 
     [[nodiscard]] Type operator[](std::size_t i) const {
         switch (i) {
@@ -29,7 +29,21 @@ public:
             case 2:
                 return third_element;
             default:
-                return;
+                break;
+        }
+
+    }
+
+    [[nodiscard]] Type &operator[](std::size_t i) {
+        switch (i) {
+            case 0:
+                return first_element;
+            case 1:
+                return second_element;
+            case 2:
+                return third_element;
+            default:
+                break;
         }
 
     }
