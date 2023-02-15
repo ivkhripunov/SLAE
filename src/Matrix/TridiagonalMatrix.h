@@ -16,7 +16,7 @@ public:
     Type second_element;
     Type third_element;
 
-    Trio(Type first_value, Type second_value, Type third_value) : first_element(first_value),
+    Trio(const Type& first_value, const Type& second_value, const Type& third_value) : first_element(first_value),
                                                                   second_element(second_value),
                                                                   third_element(third_value) {}
 
@@ -58,9 +58,9 @@ public:
         }
     }
 
-    TridiagonalMatrix(std::initializer_list<Type> &init_lower_diagonal,
-                      std::initializer_list<Type> &init_main_diagonal,
-                      std::initializer_list<Type> &init_upper_diagonal) {
+    TridiagonalMatrix(const std::initializer_list<Type> &init_lower_diagonal,
+                      const std::initializer_list<Type> &init_main_diagonal,
+                      const std::initializer_list<Type> &init_upper_diagonal) {
 
         size_ = init_main_diagonal.size();
 
