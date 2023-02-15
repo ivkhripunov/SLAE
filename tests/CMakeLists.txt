@@ -1,8 +1,8 @@
 # 'Google_test' is the subproject name
 
 # 'lib' is the folder with Google Test sources
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-add_subdirectory(Google_tests/lib) # это строчка не нужна
+#include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+#add_subdirectory(Google_tests/lib)
 
 add_executable(tridiagonal_test tridiagonal_test.cpp) # здесь название исполняемого файла и файл в котором лежит тест
 add_test(NAME tridiagonal_test COMMAND tridiagonal_test.cpp)

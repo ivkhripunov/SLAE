@@ -3,7 +3,7 @@
 //
 
 #include <gtest/gtest.h>
-#include "../src/TridiagonalMatrixSolver.h"
+#include "../src/Solver/TridiagonalMatrixSolver.h"
 
 TEST(TRIDIOGONAL_TRIO, CONSTRUCTOR) {
     Trio<double> trio_1(1.0, -999.4, 25);
