@@ -24,3 +24,39 @@ TEST(CSR_MATRIX, CONSTRUCTOR) {
 
     CSR matrix(vector, 3, 4);
 }
+
+TEST(CSR_MATRIX, MULTIPLICATION_1) {
+
+    std::vector<Element<double>> vector = {
+            {0, 1, 2},
+            {0, 0, 1},
+            {0, 3, 3},
+            {1, 2, 4},
+            {2, 1, 1},
+            {2, 3, 11}};
+
+    CSR matrix(vector, 3, 4);
+
+    std::vector<double> b = {2, 3, 4, 5};
+    std::vector<double> result = matrix * b;
+
+    std::vector<double> result_true = {23, 16, 58};
+
+    for (size_t i = 0; i < result_true.size(); ++i) {
+        ASSERT_DOUBLE_EQ(result_true[i], result[i]);
+    }
+}
+
+TEST(CSR_MATRIX, MULTIPLICATION_2) {
+    std::vector<Element<double>> vector = {};
+    CSR matrix(vector, 3, 4);
+
+    std::vector<double> b = {2, 3, 4, 5};
+    std::vector<double> result = matrix * b;
+
+    std::vector<double> result_true = {0, 0, 0};
+
+    for (size_t i = 0; i < result_true.size(); ++i) {
+        ASSERT_DOUBLE_EQ(result_true[i], result[i]);
+    }
+}

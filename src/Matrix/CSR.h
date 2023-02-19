@@ -97,9 +97,16 @@ public:
 
     }
 
-    std::vector<Type> operator*(const std::vector<Type> &vector) {
-        std::vector<Type> result(vector.size());
+    [[nodiscard]] std::vector<Type> operator*(const std::vector<Type> &vector) const {
+        std::vector<Type> result(height_, 0.);
 
+        for (size_t j = 0; j < line_index.size() - 1; ++j) {
+            for (size_t i = line_index[j]; i < line_index[j + 1]; ++i) {
+                result[j] += values[i] * vector[column_index[i]];
+            }
+        }
+
+        return result;
     }
 
 };
