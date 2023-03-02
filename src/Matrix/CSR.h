@@ -45,10 +45,10 @@ public:
         values.resize(triplets.size());
         column_index.resize(triplets.size());
         std::vector<std::size_t> current_line(height_, 0);
-        for (const auto &triple: triplets) {
-            double val = std::get<2>(triple);
-            int i = std::get<0>(triple);
-            int j = std::get<1>(triple);
+        for (const auto &triplet: triplets) {
+            double val = std::get<2>(triplet);
+            int i = std::get<0>(triplet);
+            int j = std::get<1>(triplet);
             values[line_index[i] + current_line[i]] = val;
             column_index[line_index[i] + current_line[i]] = j;
             current_line[i]++;
