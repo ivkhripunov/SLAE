@@ -14,7 +14,7 @@ TEST(CSR_MATRIX, ELEMENT_ACCESS) {
 }
 
 TEST(CSR_MATRIX, CONSTRUCTOR) {
-    std::vector<Element<double>> vector = {
+    std::vector<std::tuple<std::size_t, std::size_t, double>> vector = {
             {0, 1, 2},
             {0, 0, 1},
             {0, 3, 3},
@@ -27,7 +27,7 @@ TEST(CSR_MATRIX, CONSTRUCTOR) {
 
 TEST(CSR_MATRIX, MULTIPLICATION_1) {
 
-    std::vector<Element<double>> vector = {
+    std::vector<std::tuple<std::size_t, std::size_t, double>> vector = {
             {0, 1, 2},
             {0, 0, 1},
             {0, 3, 3},
@@ -48,7 +48,7 @@ TEST(CSR_MATRIX, MULTIPLICATION_1) {
 }
 
 TEST(CSR_MATRIX, MULTIPLICATION_2) {
-    std::vector<Element<double>> vector = {};
+    std::vector<std::tuple<std::size_t, std::size_t, double>> vector = {};
     CSR matrix(vector, 3, 4);
 
     std::vector<double> b = {2, 3, 4, 5};

@@ -6,44 +6,8 @@
 #define SLAE_CSR_H
 
 #include <vector>
-#include <algorithm>
+#include <tuple>
 
-template<typename Type>
-class Element {
-
-private:
-    std::size_t i_, j_;
-    Type value_;
-
-public:
-    Element(const std::size_t &new_i,
-            const std::size_t &new_j,
-            const Type &new_value) :
-            i_(new_i),
-            j_(new_j),
-            value_(new_value) {};
-
-    Element(std::initializer_list<Type> &initializer) :
-            i_(initializer[0]),
-            j_(initializer[1]),
-            value_(initializer[2]) {};
-
-    [[nodiscard]] std::size_t get_i() const {
-        return i_;
-    }
-
-    [[nodiscard]] std::size_t get_j() const {
-        return j_;
-    }
-
-    Type get_value() const {
-        return value_;
-    }
-
-    bool operator<(Element<Type> const &second) const {
-        return this->i_ < second.i_ or (this->i_ == second.i_ and this->j_ < second.j_);
-    };
-};
 
 template<typename Type>
 class CSR {
@@ -66,28 +30,33 @@ public:
             height_(height),
             width_(width) {};
 
-    CSR(std::vector<Element<Type>> vector_of_elements,
-        const std::size_t &height,
-        const std::size_t &width) : height_(height), width_(width) {
 
-        sort(vector_of_elements.begin(), vector_of_elements.end());
-        values.resize(vector_of_elements.size());
-        column_index.resize(vector_of_elements.size());
-        line_index.resize(height_ + 1);
-        line_index[0] = 0;
+    CSR(const std::vector<std::tuple<std::size_t, std::size_t, Type>> &triplets, int h, int w) :
+            height_(h), width_(w) {
 
-        for (size_t i = 0; i < vector_of_elements.size(); ++i) {
-            values[i] = vector_of_elements[i].get_value();
-            column_index[i] = vector_of_elements[i].get_j();
-            line_index[vector_of_elements[i].get_i() + 1] += 1;
-        }
+        std::vector<std::size_t> line_counts(height_, 0);
 
-        for (size_t i = 0; i < line_index.size() - 1; ++i) {
-            line_index[i + 1] += line_index[i];
+        for (const auto &triple: triplets) line_counts[std::get<0>(triple)]++;
+
+        line_index.resize(height_ + 1, 0);
+
+        for (int i = 1; i <= height_; ++i) line_index[i] = line_index[i - 1] + line_counts[i - 1];
+
+        values.resize(triplets.size());
+        column_index.resize(triplets.size());
+        std::vector<std::size_t> current_line(height_, 0);
+        for (const auto &triple: triplets) {
+            double val = std::get<2>(triple);
+            int i = std::get<0>(triple);
+            int j = std::get<1>(triple);
+            values[line_index[i] + current_line[i]] = val;
+            column_index[line_index[i] + current_line[i]] = j;
+            current_line[i]++;
         }
     }
 
-    Type operator()(const std::size_t &i, const std::size_t &j) const {
+
+    [[nodiscard]]Type operator()(const std::size_t &i, const std::size_t &j) const {
         {
 
             for (std::size_t k = line_index[i]; k < line_index[i + 1]; ++k) if (column_index[k] == j) return values[k];
@@ -96,6 +65,7 @@ public:
         }
 
     }
+
 
     [[nodiscard]] std::vector<Type> operator*(const std::vector<Type> &vector) const {
         std::vector<Type> result(height_, 0.);
