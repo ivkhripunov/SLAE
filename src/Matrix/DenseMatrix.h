@@ -46,6 +46,18 @@ public:
         return width_;
     }
 
+    [[nodiscard]] std::vector<Type> operator*(const std::vector<Type> &vector) const {
+        std::vector<Type> result(height_, 0);
+
+        for (std::size_t i = 0; i < height_; ++i) {
+            for (std::size_t j = 0; j < width_; ++j) {
+                result[i] += result[width_ * i + j];
+            }
+        }
+
+        return result;
+    }
+
 };
 
 #endif //SLAE_DENSEMATRIX_H
