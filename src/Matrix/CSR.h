@@ -59,7 +59,6 @@ public:
 
     [[nodiscard]]Type operator()(const std::size_t &i, const std::size_t &j) const {
         {
-
             for (std::size_t k = line_index[i]; k < line_index[i + 1]; ++k) if (column_index[k] == j) return values[k];
 
             return static_cast<Type>(0);
