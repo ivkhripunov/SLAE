@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <tuple>
+#include "DenseMatrix.h"
 
 
 template<typename Type>
@@ -31,8 +32,8 @@ public:
             width_(width) {};
 
 
-    CSR(const std::vector<std::tuple<std::size_t, std::size_t, Type>> &triplets, int h, int w) :
-            height_(h), width_(w) {
+    CSR(const std::vector<std::tuple<std::size_t, std::size_t, Type>> &triplets, int height, int width) :
+            height_(height), width_(width) {
 
         std::vector<std::size_t> line_counts(height_, 0);
 
@@ -61,7 +62,7 @@ public:
 
             for (std::size_t k = line_index[i]; k < line_index[i + 1]; ++k) if (column_index[k] == j) return values[k];
 
-            return 0;
+            return static_cast<Type>(0);
         }
 
     }
