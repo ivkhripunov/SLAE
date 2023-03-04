@@ -23,6 +23,7 @@ GaussSeidel(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Ty
     std::vector<Type> result = initial_guess;
 
     while (third_norm(A * result - b) > tolerance) {
+        std::cout << third_norm(A * result - b) << std::endl;
         for (long long i = 0; i < b.size(); ++i) {
             Type sum = static_cast<Type>(0);
 
@@ -37,27 +38,4 @@ GaussSeidel(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Ty
     }
     return result;
 }
-
-/*
-template <typename T>
-std::vector<T> GaussSeidel(const CSR<T> &A, const std::vector<T> &b, const std::vector<T> &x0, const T tolerance)
-{
-    std::vector<T> xk = x0;
-    T sum_1 = 0, sum_2 = 0;
-    while(third_norm(A * xk - b) > tolerance){
-        for(long long k = 0; k < x0.size(); k ++){
-            for(long long i = 0; i < k - 1; i ++)
-                sum_1 += A(k, i) * xk[i];
-            for(long long i = k + 1; i < x0.size(); i ++)
-                sum_2 += A(k, i) * xk[i];
-            xk[k] = (1 / A(k, k)) * (b[k] - sum_1 - sum_2);
-            sum_1 = 0;
-            sum_2 = 0;
-        }
-    }
-    return xk;
-}*/
-
-
-
 #endif //SLAE_GAUSSSEIDEL_H
