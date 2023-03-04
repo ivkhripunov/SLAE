@@ -11,3 +11,7 @@ target_link_libraries(threediagonal_test SLAE gtest gtest_main)  # Здесь л
 add_executable(CSR_test CSR_test.cpp)
 add_test(NAME CSR_test COMMAND CSR_test.cpp)
 target_link_libraries(CSR_test SLAE gtest gtest_main)
+
+add_executable(Dense_test Dense_test.cpp)
+add_test(NAME Dense_test COMMAND Dense_test.cpp)
+target_link_libraries(Dense_test SLAE gtest gtest_main)

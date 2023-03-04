@@ -80,3 +80,5 @@ TEST(TRIDIAGONAL, SOLVE_2) {
         ASSERT_NEAR(result[i], result_true[i], 1e-15);
     }
 }
+
+

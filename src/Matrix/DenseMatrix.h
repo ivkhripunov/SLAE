@@ -19,6 +19,11 @@ public:
     DenseMatrix(const std::size_t &height, const std::size_t &width) : height_(height), width_(width),
                                                                        matrix_(std::vector<Type>(height * width)) {};
 
+    DenseMatrix(const std::size_t &height, const std::size_t &width, const std::vector<Type> &new_matrix) : height_(
+            height),
+                                                                                                            width_(width),
+                                                                                                            matrix_(new_matrix) {}
+
     DenseMatrix(const std::size_t &height, const std::size_t &width,
                 std::vector<std::tuple<std::size_t, std::size_t, Type>> &data) : height_(height), width_(width) {
         matrix_.resize(height * width);
@@ -38,6 +43,16 @@ public:
         return matrix_[i * width_ + j];
     }
 
+    DenseMatrix &operator+=(const DenseMatrix<Type> &other) {
+        for (std::size_t i = 0; i < matrix_.size(); ++i) matrix_[i] += other.matrix_[i];
+        return *this;
+    }
+
+    DenseMatrix operator+(const DenseMatrix<Type> &other) const {
+        DenseMatrix<Type> result = *this;
+        return result += other;
+    }
+
     [[nodiscard]] const std::size_t &get_geight() const {
         return height_;
     }
@@ -51,7 +66,7 @@ public:
 
         for (std::size_t i = 0; i < height_; ++i) {
             for (std::size_t j = 0; j < width_; ++j) {
-                result[i] += result[width_ * i + j];
+                result[i] += matrix_[width_ * i + j] * vector[j];
             }
         }
 
