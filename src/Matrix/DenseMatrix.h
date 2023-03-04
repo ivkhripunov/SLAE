@@ -71,6 +71,16 @@ public:
         return result;
     }
 
+    [[nodiscard]] std::vector<Type> get_line(const std::size_t &k) const {
+        std::vector<Type> result(width_);
+
+        for (std::size_t i = 0; i < width_; ++i) {
+            result[i] = matrix_[width_ * k + i];
+        }
+
+        return result;
+    }
+
     [[nodiscard]] std::vector<Type> operator*(const std::vector<Type> &vector) const {
         std::vector<Type> result(height_, 0);
 
@@ -83,14 +93,10 @@ public:
         return result;
     }
 
-    DenseMatrix<Type> transpose() const {
-        DenseMatrix<Type> result(width_, height_);
+    [[nodiscard]] DenseMatrix<Type> operator*(const Type &number) const {
+        DenseMatrix<Type> result = *this;
 
-        for (int i = 0; i < height_; i++) {
-            for (int j = 0; j < width_; j++) {
-                result(j, i) = matrix_[i * width_ + j];
-            }
-        }
+        for (auto &element: result->matrix_) element *= 5;
 
         return result;
     }
