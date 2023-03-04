@@ -80,6 +80,10 @@ public:
         return result;
     }
 
+    [[nodiscard]] std::size_t get_width() const {
+        return width_;
+    }
+
 };
 
 #endif //SLAE_CSR_H

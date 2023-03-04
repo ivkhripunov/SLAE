@@ -16,6 +16,6 @@ add_executable(Dense_test Dense_test.cpp)
 add_test(NAME Dense_test COMMAND Dense_test.cpp)
 target_link_libraries(Dense_test SLAE gtest gtest_main)
 
-add_executable(SimpleIteration_test SimpleIteration_test.cpp)
-add_test(NAME SimpleIteration_test COMMAND SimpleIteration_test.cpp)
+add_executable(SimpleIteration_test Iteration_test.cpp)
+add_test(NAME SimpleIteration_test COMMAND Iteration_test.cpp)
 target_link_libraries(SimpleIteration_test SLAE gtest gtest_main)
