@@ -9,6 +9,9 @@
 
 template<typename Type>
 std::tuple<DenseMatrix<Type>, DenseMatrix<Type>> QR_Householder(const DenseMatrix<Type> &A) {
+    DenseMatrix<Type> R = A;
+    DenseMatrix<Type> Q;
+
 
 }
 

@@ -17,7 +17,7 @@ private:
 public:
 
     DenseMatrix(const std::size_t &height, const std::size_t &width) : height_(height), width_(width),
-                                                                       matrix_(std::vector<Type>(height * width)) {};
+                                                                       matrix_(std::vector<Type>(height * width), 0) {};
 
     DenseMatrix(const std::size_t &height, const std::size_t &width, const std::vector<Type> &new_matrix) : height_(
             height),
@@ -61,12 +61,34 @@ public:
         return width_;
     }
 
+    [[nodiscard]] std::vector<Type> get_column(const std::size_t &k) const {
+        std::vector<Type> result(height_);
+
+        for (std::size_t i = 0; i < height_; ++i) {
+            result[i] = matrix_[width_ * i + k];
+        }
+
+        return result;
+    }
+
     [[nodiscard]] std::vector<Type> operator*(const std::vector<Type> &vector) const {
         std::vector<Type> result(height_, 0);
 
         for (std::size_t i = 0; i < height_; ++i) {
             for (std::size_t j = 0; j < width_; ++j) {
                 result[i] += matrix_[width_ * i + j] * vector[j];
+            }
+        }
+
+        return result;
+    }
+
+    DenseMatrix<Type> transpose() const {
+        DenseMatrix<Type> result(width_, height_);
+
+        for (int i = 0; i < height_; i++) {
+            for (int j = 0; j < width_; j++) {
+                result(j, i) = matrix_[i * width_ + j];
             }
         }
 
