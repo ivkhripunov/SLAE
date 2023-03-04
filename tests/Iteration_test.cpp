@@ -64,7 +64,7 @@ TEST(MPI, TASK_3) {
 
     std::vector<double> result = b;
 
-    result = SimpleIteration(A, b, x0, 1e-12, 1e-2);
+    result = SimpleIteration(A, b, x0, 1e-12, 0.1935);
 
     //for (const auto &element: result) std::cout << element << " ";
 }
