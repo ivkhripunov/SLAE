@@ -8,12 +8,6 @@
 #include "../Matrix/CSR.h"
 #include "../Utilities/Norm.h"
 #include "../Utilities/Overload.h"
-#include <fstream>
-
-template<typename T>
-T max(T a, T b) {
-    return a > b ? a : b;
-}
 
 
 template<typename Type>
@@ -21,13 +15,9 @@ std::vector<Type>
 GaussSeidel(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
             const Type &tolerance) {
 
-    std::ofstream fout;
-    fout.open("/home/ivankhripunov/CLionProjects/SLAE/tests/gaussseidel.txt");
-    unsigned long long counter = 0;
-
     std::vector<Type> result = initial_guess;
 
-    while (counter < 1000) {
+    while (third_norm(A * result - b) > tolerance) {
 
         for (long long i = 0; i < b.size(); ++i) {
             Type sum = static_cast<Type>(0);
@@ -40,11 +30,8 @@ GaussSeidel(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Ty
             result[i] = (1 / A(i, i)) * (b[i] - sum);
 
         }
-
-        fout << counter << " " << third_norm(A * result - b) << std::endl;
-
-        counter++;
     }
     return result;
 }
+
 #endif //SLAE_GAUSSSEIDEL_H
