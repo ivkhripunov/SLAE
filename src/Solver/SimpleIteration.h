@@ -8,6 +8,7 @@
 #include "../Matrix/CSR.h"
 #include "../Utilities/Norm.h"
 #include "../Utilities/Overload.h"
+#include<fstream>
 
 template<typename Type>
 std::vector<Type>
@@ -15,22 +16,27 @@ SimpleIteration(const CSR<Type> &A, const std::vector<Type> &b, const std::vecto
                 const Type &tolerance,
                 const Type &step) {
 
+    std::ofstream fout;
+    fout.open("/home/ivankhripunov/CLionProjects/SLAE/tests/mpi.txt");
+
     long long int  counter = 0;
 
     std::vector<Type> r = A * initial_guess - b;
     std::vector<Type> result = initial_guess;
 
-    while (third_norm(r) > tolerance) {
+    while (counter < 1000) {
         result = result - r * step;
         r = A * result - b;
 
         counter ++;
 
-        std::cout << third_norm(r) << std::endl;
+        fout << counter << " " << third_norm(r) << std::endl;
+
 
     }
 
-    std::cout << counter;
+    fout.close();
+
     return result;
 
 
