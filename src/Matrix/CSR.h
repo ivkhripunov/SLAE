@@ -86,32 +86,65 @@ public:
         return width_;
     }
 
-    friend
     std::vector<Type>
-    Jacobi(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
-           const Type &tolerance) {
+    Jacobi(const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+           const Type &tolerance);
 
-        std::vector<Type> tmp(b.size()), result = initial_guess;
-        Type diagonal_element;
-
-        while(inf_norm(A * result - b) > tolerance) {
-
-            for (std::size_t k = 0; k < b.size(); ++k) {
-                tmp[k] = b[k];
-                for (size_t i = A.line_index[k]; i < A.line_index[k + 1]; ++i) {
-                    if (A.column_index[i] == k) diagonal_element = A.values[i];
-                    else tmp[k] -= A.values[i] * result[A.column_index[i]];
-                }
-
-                tmp[k] /= diagonal_element;
-            }
-            result = tmp;
-
-        }
-
-        return result;
-    }
+    std::vector<Type>
+    GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+           const Type &tolerance);
 
 };
+
+template<typename Type>
+std::vector<Type>
+CSR<Type>::Jacobi(const std::vector<Type> &b, const std::vector<Type> &initial_guess, const Type &tolerance) {
+
+    std::vector<Type> tmp(b.size()), result = initial_guess;
+    Type diagonal_element;
+
+    while (inf_norm((*this) * result - b) > tolerance) {
+
+        for (std::size_t k = 0; k < b.size(); ++k) {
+            tmp[k] = b[k];
+            for (size_t i = line_index[k]; i < line_index[k + 1]; ++i) {
+                if (column_index[i] == k) diagonal_element = values[i];
+                else tmp[k] -= values[i] * result[column_index[i]];
+            }
+
+            tmp[k] /= diagonal_element;
+        }
+        result = tmp;
+
+    }
+
+    return result;
+
+}
+
+template<typename Type>
+std::vector<Type>
+CSR<Type>::GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &initial_guess, const Type &tolerance) {
+
+    std::vector<Type> result = initial_guess;
+    Type diagonal_element;
+
+    while (inf_norm((*this) * result - b) > tolerance) {
+
+        for (std::size_t k = 0; k < b.size(); ++k) {
+            result[k] = b[k];
+            for (size_t i = line_index[k]; i < line_index[k + 1]; ++i) {
+                if (column_index[i] == k) diagonal_element = values[i];
+                else result[k] -= values[i] * result[column_index[i]];
+            }
+
+            result[k] /= diagonal_element;
+        }
+
+    }
+
+    return result;
+}
+
 
 #endif //SLAE_CSR_H

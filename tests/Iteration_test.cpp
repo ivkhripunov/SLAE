@@ -5,6 +5,7 @@
 #include <gtest/gtest.h>
 #include "../src/Solver/SimpleIteration.h"
 #include "../src/Solver/GaussSeidel.h"
+#include "../src/Solver/Jacobi.h"
 #include "../src/Matrix/CSR.h"
 
 TEST(SIMPLEITERATION, SOLVE_1) {
@@ -36,7 +37,7 @@ TEST(JACOBI, SOLVE_1) {
 
     std::vector<double> expected = {1, 1, 1};
 
-    std::vector<double> result = Jacobi(A, b, initial, 1e-10);
+    std::vector<double> result = A.Jacobi(b, initial, 1e-10);
 
     for (std::size_t i = 0; i < expected.size(); ++i) ASSERT_NEAR(expected[i], result[i], 1e-5);
 }
@@ -53,7 +54,7 @@ TEST(GAUSSSEIDEL, SOLVE_1) {
 
     std::vector<double> expected = {1, 1, 1};
 
-    std::vector<double> result = GaussSeidel(A, b, initial, 1e-2);
+    std::vector<double> result = A.GaussSeidel(b, initial, 1e-2);
 
     for (std::size_t i = 0; i < expected.size(); ++i) ASSERT_NEAR(expected[i], result[i], 1e-2);
 }
