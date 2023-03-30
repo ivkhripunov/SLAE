@@ -92,7 +92,7 @@ public:
 
     std::vector<Type>
     GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &initial_guess,
-           const Type &tolerance);
+                const Type &tolerance);
 
 };
 
@@ -126,20 +126,24 @@ template<typename Type>
 std::vector<Type>
 CSR<Type>::GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &initial_guess, const Type &tolerance) {
 
-    std::vector<Type> result = initial_guess;
+    std::vector<Type> tmp = initial_guess, result(b.size());
     Type diagonal_element;
 
     while (inf_norm((*this) * result - b) > tolerance) {
 
         for (std::size_t k = 0; k < b.size(); ++k) {
             result[k] = b[k];
+
             for (size_t i = line_index[k]; i < line_index[k + 1]; ++i) {
-                if (column_index[i] == k) diagonal_element = values[i];
-                else result[k] -= values[i] * result[column_index[i]];
+                if (column_index[i] < k) result[k] -= values[i] * result[column_index[i]];
+                else if (column_index[i] == k) diagonal_element = values[i];
+                else result[k] -= values[i] * tmp[column_index[i]];
             }
 
             result[k] /= diagonal_element;
         }
+
+        tmp = result;
 
     }
 
