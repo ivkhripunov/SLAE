@@ -25,4 +25,5 @@ std::vector<Type> operator*(const std::vector<Type>& a, const Type &c) {
     return result;
 }
 
+
 #endif //SLAE_OVERLOAD_H

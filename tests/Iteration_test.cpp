@@ -4,8 +4,8 @@
 
 #include <gtest/gtest.h>
 #include "../src/Solver/SimpleIteration.h"
-#include "../src/Solver/Jacobi.h"
 #include "../src/Solver/GaussSeidel.h"
+#include "../src/Matrix/CSR.h"
 
 TEST(SIMPLEITERATION, SOLVE_1) {
     CSR<double> matrix({1, 2, 3, 4, 1, 11}, {0, 1, 3, 2, 1, 3}, {0, 3, 4, 6}, 3, 4);

@@ -9,6 +9,9 @@
 #include <tuple>
 #include "DenseMatrix.h"
 
+#include "../Utilities/Norm.h"
+#include "../Utilities/Overload.h"
+
 
 template<typename Type>
 class CSR {
@@ -81,6 +84,32 @@ public:
 
     [[nodiscard]] std::size_t get_width() const {
         return width_;
+    }
+
+    friend
+    std::vector<Type>
+    Jacobi(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+           const Type &tolerance) {
+
+        std::vector<Type> tmp(b.size()), result = initial_guess;
+        Type diagonal_element;
+
+        while(inf_norm(A * result - b) > tolerance) {
+
+            for (std::size_t k = 0; k < b.size(); ++k) {
+                tmp[k] = b[k];
+                for (size_t i = A.line_index[k]; i < A.line_index[k + 1]; ++i) {
+                    if (A.column_index[i] == k) diagonal_element = A.values[i];
+                    else tmp[k] -= A.values[i] * result[A.column_index[i]];
+                }
+
+                tmp[k] /= diagonal_element;
+            }
+            result = tmp;
+
+        }
+
+        return result;
     }
 
 };
