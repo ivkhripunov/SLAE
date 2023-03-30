@@ -18,7 +18,7 @@ SimpleIteration(const CSR<Type> &A, const std::vector<Type> &b, const std::vecto
     std::vector<Type> r = A * initial_guess - b;
     std::vector<Type> result = initial_guess;
 
-    while (third_norm(r) > tolerance) {
+    while (inf_norm(r) > tolerance) {
         result = result - r * step;
         r = A * result - b;
     }

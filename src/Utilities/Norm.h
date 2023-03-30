@@ -8,12 +8,11 @@
 #include <vector>
 
 template<typename Type>
-Type third_norm(const std::vector<Type> &vector) {
-    Type result = static_cast<Type>(0);
+Type inf_norm(const std::vector<Type> &vector) {
 
-    for (const Type &element: vector) result += element * element;
-
-    return result;
+    return std::abs(*std::max_element(vector.begin(), vector.end(), [](const Type &a, const Type &b) {
+        return std::abs(a) < std::abs(b);
+    }));
 }
 
 #endif //SLAE_NORM_H

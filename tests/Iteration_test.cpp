@@ -53,7 +53,7 @@ TEST(GAUSSSEIDEL, SOLVE_1) {
 
     std::vector<double> expected = {1, 1, 1};
 
-    std::vector<double> result = GaussSeidel(A, b, initial, 1e-1);
+    std::vector<double> result = GaussSeidel(A, b, initial, 1e-2);
 
     for (std::size_t i = 0; i < expected.size(); ++i) ASSERT_NEAR(expected[i], result[i], 1e-2);
 }

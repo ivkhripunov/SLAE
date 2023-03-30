@@ -17,7 +17,7 @@ GaussSeidel(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Ty
 
     std::vector<Type> result = initial_guess;
 
-    while (third_norm(A * result - b) > tolerance) {
+    while (inf_norm(A * result - b) > tolerance) {
 
         for (long long i = 0; i < b.size(); ++i) {
             Type sum = static_cast<Type>(0);
