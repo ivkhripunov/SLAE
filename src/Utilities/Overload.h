@@ -17,10 +17,28 @@ std::vector<Type> operator-(const std::vector<Type>& a, const std::vector<Type>&
 }
 
 template<typename Type>
+std::vector<Type> operator+(const std::vector<Type>& a, const std::vector<Type>& b) {
+    std::vector<Type> result(a.size());
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        result[i] = a[i] + b[i];
+    }
+    return result;
+}
+
+template<typename Type>
 std::vector<Type> operator*(const std::vector<Type>& a, const Type &c) {
     std::vector<Type> result(a.size());
     for (std::size_t i = 0; i < a.size(); ++i) {
         result[i] = a[i] * c;
+    }
+    return result;
+}
+
+template<typename Type>
+std::vector<Type> operator/(const std::vector<Type>& a, const Type &c) {
+    std::vector<Type> result(a.size());
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        result[i] = a[i] / c;
     }
     return result;
 }

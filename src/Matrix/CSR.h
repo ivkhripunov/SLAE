@@ -94,6 +94,10 @@ public:
     GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &initial_guess,
                 const Type &tolerance);
 
+
+
+
+
 };
 
 template<typename Type>
@@ -149,6 +153,7 @@ CSR<Type>::GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &init
 
     return result;
 }
+
 
 
 #endif //SLAE_CSR_H

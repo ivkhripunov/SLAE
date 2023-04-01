@@ -8,6 +8,7 @@
 #include "../src/Solver/Jacobi.h"
 #include "../src/Matrix/CSR.h"
 
+
 TEST(SIMPLEITERATION, SOLVE_1) {
     CSR<double> matrix({1, 2, 3, 4, 1, 11}, {0, 1, 3, 2, 1, 3}, {0, 3, 4, 6}, 3, 4);
 
@@ -80,4 +81,20 @@ TEST(TASK_4, TASK_4) {
     std::vector<double> result = b;
 
     result = GaussSeidel(A, b, x0, 1e-12);
+}
+
+TEST(MPICHEBYSHEV, SOLVE_1) {
+
+    CSR<double> A = {{2.0, -1.0, 0.0, -1.0, 2.0, -1.0, 0.0, -1.0, 2.0}, {0, 1, 2, 0, 1, 2, 0, 1, 2}, {0, 3, 6, 9}, 3,
+                     3};
+
+    std::vector<double> b = {1.0, 0.0, 1.0};
+
+    std::vector<double> initial = {0, 0, 0};
+
+    std::vector<double> expected = {1, 1, 1};
+
+    std::vector<double> result = MPI_ChebyshevAcceleration(A, b, initial, 6, 2 - sqrt(2), 2 + sqrt(2));
+
+    for (std::size_t i = 0; i < expected.size(); ++i) ASSERT_NEAR(expected[i], result[i], 1e-15);
 }
