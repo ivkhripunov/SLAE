@@ -6,6 +6,7 @@
 #include "../src/Solver/SimpleIteration.h"
 #include "../src/Solver/GaussSeidel.h"
 #include "../src/Solver/Jacobi.h"
+#include "../src/Solver/CG.h"
 #include "../src/Matrix/CSR.h"
 
 
@@ -113,4 +114,20 @@ TEST(SOR, SOLVE_1) {
     std::vector<double> result = A.SOR(b, initial, 1e-15, 1.5);
 
     for (std::size_t i = 0; i < expected.size(); ++i) ASSERT_NEAR(expected[i], result[i], 1e-15);
+}
+
+TEST(CG, SOLVE_1) {
+
+    CSR<double> A = {{2.0, -1.0, 0.0, -1.0, 2.0, -1.0, 0.0, -1.0, 2.0}, {0, 1, 2, 0, 1, 2, 0, 1, 2}, {0, 3, 6, 9}, 3,
+                     3};
+
+    std::vector<double> b = {1.0, 0.0, 1.0};
+
+    std::vector<double> initial = {0, 0, 0};
+
+    std::vector<double> expected = {1, 1, 1};
+
+    std::vector<double> result = CG(A, b, initial, 1e-4);
+
+    for (std::size_t i = 0; i < expected.size(); ++i) ASSERT_NEAR(expected[i], result[i], 1e-4);
 }

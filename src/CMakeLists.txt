@@ -4,4 +4,4 @@ project(SLAE)
 
 set(CMAKE_CXX_STANDARD 17)
 file(GLOB_RECURSE source *.hpp *.h *.cpp)
-add_library(SLAE INTERFACE ${source} Matrix Solver Utilities Solver/Jacobi.h)
+add_library(SLAE INTERFACE ${source} Matrix Solver Utilities)
