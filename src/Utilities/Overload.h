@@ -5,6 +5,7 @@
 #ifndef SLAE_OVERLOAD_H
 #define SLAE_OVERLOAD_H
 
+#include <ostream>
 #include <vector>
 
 template<typename Type>

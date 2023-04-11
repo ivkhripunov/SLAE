@@ -13,7 +13,7 @@ Jacobi(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &
     std::vector<Type> result = initial_guess;
     std::vector<Type> tmp;
 
-    while (inf_norm(A * result - b) > tolerance) {
+    while (second_norm(A * result - b) > tolerance) {
         tmp = result;
         for (int i = 0; i < b.size(); ++i) {
             Type sum = static_cast<Type>(0);

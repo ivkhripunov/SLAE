@@ -18,7 +18,7 @@ CG(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &init
     Type d_r = d * r;
     Type alpha = d_r / (d * (A * d));
 
-    while (inf_norm(r) > tolerance) {
+    while (second_norm(r) > tolerance) {
 
         result = result - alpha * d;
 

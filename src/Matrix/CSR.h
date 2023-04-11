@@ -7,10 +7,27 @@
 
 #include <vector>
 #include <tuple>
+#include <fstream>
 #include "DenseMatrix.h"
 
 #include "../Utilities/Norm.h"
 #include "../Utilities/Overload.h"
+
+
+template<typename T>
+struct DOK {
+    std::size_t i;
+    std::size_t j;
+    T value_;
+
+    //DOK(std::initializer_list<T> &init) : i(init[0]), j(init[1]), value_(init[2]) {}
+
+    bool operator<(const DOK<T> dok_) const {
+        if (i != dok_.i) return i < dok_.i;
+        if (i == dok_.i) return j < dok_.j;
+    }
+
+};
 
 
 template<typename Type>
@@ -34,7 +51,7 @@ public:
             height_(height),
             width_(width) {};
 
-
+/*
     CSR(const std::vector<std::tuple<std::size_t, std::size_t, Type>> &triplets, int height, int width) :
             height_(height), width_(width) {
 
@@ -57,6 +74,59 @@ public:
             column_index[line_index[i] + current_line[i]] = j;
             current_line[i]++;
         }
+    }*/
+/*
+    CSR(std::vector<std::tuple<std::size_t, std::size_t, Type>> &elements_, int row_num, int col_num) : height_(row_num), width_(col_num) {
+        std::sort(elements_.begin(), elements_.end());
+        line_index.reserve(row_num + 1);
+        values.reserve(elements_.size());
+        column_index.reserve(elements_.size());
+        line_index.push_back(0);
+
+        int count_el = 0;
+        int i = 0; // row index
+        for (std::tuple<std::size_t, std::size_t, Type> &it: elements_) {
+            while (i < std::get<0>(it)) {
+                line_index.push_back(count_el);
+                i += 1;
+            }
+
+            if (std::get<0>(it) == i) {
+                values.push_back(std::get<2>(it));
+                column_index.push_back(std::get<1>(it));
+                count_el++;
+            }
+        }
+        line_index.push_back(count_el);
+
+
+    }*/
+
+    CSR(std::vector<DOK<Type>> &elements_, int row_num, int col_num) : height_(row_num), width_(col_num) {
+
+        std::sort(elements_.begin(), elements_.end());
+        line_index.reserve(row_num + 1);
+        values.reserve(elements_.size());
+        column_index.reserve(elements_.size());
+        line_index.push_back(0);
+
+        int count_el = 0;
+        int i = 0; // row index
+        for (auto it: elements_) {
+            while (i < it.i) {
+                line_index.push_back(count_el);
+                i += 1;
+            }
+
+            if (it.i == i) {
+                values.push_back(it.value_);
+                column_index.push_back(it.j);
+                count_el++;
+            }
+        }
+        line_index.push_back(count_el);
+
+
     }
 
 
@@ -99,6 +169,10 @@ public:
     SOR(const std::vector<Type> &b, const std::vector<Type> &initial_guess,
         const Type &tolerance, const Type &w);
 
+    std::vector<Type>
+    SSOR(const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+        const Type &tolerance, const Type &w);
+
 
 };
 
@@ -109,7 +183,7 @@ CSR<Type>::Jacobi(const std::vector<Type> &b, const std::vector<Type> &initial_g
     std::vector<Type> tmp(b.size()), result = initial_guess;
     Type diagonal_element;
 
-    while (inf_norm((*this) * result - b) > tolerance) {
+    while (second_norm((*this) * result - b) > tolerance) {
 
         for (std::size_t k = 0; k < b.size(); ++k) {
             tmp[k] = b[k];
@@ -135,7 +209,7 @@ CSR<Type>::GaussSeidel(const std::vector<Type> &b, const std::vector<Type> &init
     std::vector<Type> tmp = initial_guess, result(b.size());
     Type diagonal_element;
 
-    while (inf_norm((*this) * result - b) > tolerance) {
+    while (second_norm((*this) * result - b) > tolerance) {
 
         for (std::size_t k = 0; k < b.size(); ++k) {
             result[k] = b[k];
@@ -161,29 +235,78 @@ std::vector<Type>
 CSR<Type>::SOR(const std::vector<Type> &b, const std::vector<Type> &initial_guess, const Type &tolerance,
                const Type &w) {
 
-    std::vector<Type> tmp = initial_guess, result(b.size());
+    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/SOR.txt");
+    std::size_t counter = 0;
+
+    std::vector<Type> result = initial_guess;
     Type diagonal_element;
 
-    while (inf_norm((*this) * result - b) > tolerance) {
+    while (second_norm((*this) * result - b) > tolerance) {
 
-        for (std::size_t k = 0; k < b.size(); ++k) {
-            result[k] = b[k];
+        fout << counter << " " << second_norm((*this) * result - b) << std::endl;
+        counter++;
 
-            for (size_t i = line_index[k]; i < line_index[k + 1]; ++i) {
-                if (column_index[i] < k) result[k] -= values[i] * result[column_index[i]];
-                else if (column_index[i] == k) diagonal_element = values[i];
-                else result[k] -= values[i] * tmp[column_index[i]];
-            }
+        for (std::size_t i = 0; i < b.size(); ++i) {
+            Type sum = b[i];
 
-            result[k] = w / diagonal_element * result[k] + (1 - w) * tmp[k];
+            for (size_t j = line_index[i]; j < line_index[i + 1]; ++j)
+                if (column_index[j] != i) sum -= values[j] * result[column_index[j]];
+
+            result[i] = (1 - w) * result[i] + w * sum / (*this)(i, i);
+
         }
-
-        tmp = result;
 
     }
 
     return result;
 }
 
+template<typename Type>
+std::vector<Type>
+CSR<Type>::SSOR(const std::vector<Type> &b, const std::vector<Type> &initial_guess, const Type &tolerance,
+               const Type &w) {
+
+    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/SSOR.txt");
+    std::size_t counter = 0;
+
+    std::vector<Type> result = initial_guess;
+    Type diagonal_element;
+
+    while (second_norm((*this) * result - b) > tolerance) {
+
+        fout << counter << " " << second_norm((*this) * result - b) << std::endl;
+        counter++;
+
+        for (std::size_t i = 0; i < b.size(); ++i) {
+            Type sum = b[i];
+
+            for (size_t j = line_index[i]; j < line_index[i + 1]; ++j) {
+                if (column_index[j] != i) sum -= values[j] * result[column_index[j]];
+                else diagonal_element = values[j];
+            }
+
+            result[i] = (1 - w) * result[i] + w * sum / diagonal_element;
+
+        }
+
+        fout << counter << " " << second_norm((*this) * result - b) << std::endl;
+        counter++;
+
+        for (int i = b.size() - 1; i > 0; i--) {
+            Type sum = b[i];
+
+            for (size_t j = line_index[i]; j < line_index[i + 1]; ++j) {
+                if (column_index[j] != i) sum -= values[j] * result[column_index[j]];
+                else diagonal_element = values[j];
+            }
+
+            result[i] = (1 - w) * result[i] + w * sum / diagonal_element;
+
+        }
+
+    }
+
+    return result;
+}
 
 #endif //SLAE_CSR_H
