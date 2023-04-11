@@ -12,25 +12,30 @@ std::vector<Type>
 CG(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
                 const Type &tolerance) {
 
+    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/log/CG.txt");
+    std::size_t counter = 0;
+
     std::vector<Type> result = initial_guess;
-    std::vector<Type> r = A * initial_guess - b;
+    std::vector<Type> r = A * result - b, old_r;
     std::vector<Type> d = r;
-    Type d_r = d * r;
-    Type alpha = d_r / (d * (A * d));
+    Type alpha;
 
     while (second_norm(r) > tolerance) {
 
+        fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
+        counter++;
+
+        alpha = d * r / (d * (A * d));
+
         result = result - alpha * d;
 
+        old_r = r;
         r = A * result - b;
 
-        d_r = d * r;
-
-        if (d_r <= 1e-15) return CG(A, b, result, tolerance);
-
-        d = r + ((r * r) / d_r) * d;
-        alpha = (d * r) / (d * (A * d));
+        d = r + ((r * r) / (d * old_r)) * d;
     }
+
+    fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
 
     return result;
 }

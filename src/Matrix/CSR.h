@@ -14,17 +14,15 @@
 #include "../Utilities/Overload.h"
 
 
-template<typename T>
-struct DOK {
+template<typename Type>
+struct Triplet {
     std::size_t i;
     std::size_t j;
-    T value_;
+    Type value_;
 
-    //DOK(std::initializer_list<T> &init) : i(init[0]), j(init[1]), value_(init[2]) {}
-
-    bool operator<(const DOK<T> dok_) const {
-        if (i != dok_.i) return i < dok_.i;
-        if (i == dok_.i) return j < dok_.j;
+    bool operator<(const Triplet<Type> &triplet) const {
+        if (i != triplet.i) return i < triplet.i;
+        else return j < triplet.j;
     }
 
 };
@@ -51,82 +49,61 @@ public:
             height_(height),
             width_(width) {};
 
-/*
-    CSR(const std::vector<std::tuple<std::size_t, std::size_t, Type>> &triplets, int height, int width) :
-            height_(height), width_(width) {
+    CSR(const std::vector<Triplet<Type>> &triplets, const std::size_t &height, const std::size_t &width) : height_(height), width_(width) {
 
-        std::vector<std::size_t> line_counts(height_, 0);
+        std::vector<Triplet<Type>> triplets_vector = triplets;
 
-        for (const auto &triple: triplets) line_counts[std::get<0>(triple)]++;
+        std::sort(triplets_vector.begin(), triplets_vector.end());
 
-        line_index.resize(height_ + 1, 0);
-
-        for (int i = 1; i <= height_; ++i) line_index[i] = line_index[i - 1] + line_counts[i - 1];
-
-        values.resize(triplets.size());
-        column_index.resize(triplets.size());
-        std::vector<std::size_t> current_line(height_, 0);
-        for (const auto &triplet: triplets) {
-            double val = std::get<2>(triplet);
-            int i = std::get<0>(triplet);
-            int j = std::get<1>(triplet);
-            values[line_index[i] + current_line[i]] = val;
-            column_index[line_index[i] + current_line[i]] = j;
-            current_line[i]++;
-        }
-    }*/
-/*
-    CSR(std::vector<std::tuple<std::size_t, std::size_t, Type>> &elements_, int row_num, int col_num) : height_(row_num), width_(col_num) {
-        std::sort(elements_.begin(), elements_.end());
-        line_index.reserve(row_num + 1);
-        values.reserve(elements_.size());
-        column_index.reserve(elements_.size());
+        line_index.reserve(height_ + 1);
+        values.reserve(triplets_vector.size());
+        column_index.reserve(triplets_vector.size());
         line_index.push_back(0);
 
-        int count_el = 0;
-        int i = 0; // row index
-        for (std::tuple<std::size_t, std::size_t, Type> &it: elements_) {
-            while (i < std::get<0>(it)) {
-                line_index.push_back(count_el);
-                i += 1;
+        std::size_t element_counter = 0;
+        std::size_t line_counter = 0;
+        for (const Triplet<Type> &triplet: triplets_vector) {
+            while (line_counter < triplet.i) {
+                line_index.push_back(element_counter);
+                line_counter++;
             }
 
-            if (std::get<0>(it) == i) {
-                values.push_back(std::get<2>(it));
-                column_index.push_back(std::get<1>(it));
-                count_el++;
+            if (triplet.i == line_counter) {
+                values.push_back(triplet.value_);
+                column_index.push_back(triplet.j);
+                element_counter++;
             }
         }
-        line_index.push_back(count_el);
+        line_index.push_back(element_counter);
+    }
 
 
-    }*/
+    CSR(const std::initializer_list<Triplet<Type>> &triplets, const std::size_t &height, const std::size_t &width) : height_(height), width_(width) {
 
-    CSR(std::vector<DOK<Type>> &elements_, int row_num, int col_num) : height_(row_num), width_(col_num) {
+        std::vector<Triplet<Type>> triplets_vector(triplets);
 
-        std::sort(elements_.begin(), elements_.end());
-        line_index.reserve(row_num + 1);
-        values.reserve(elements_.size());
-        column_index.reserve(elements_.size());
+        std::sort(triplets_vector.begin(), triplets_vector.end());
+
+        line_index.reserve(height_ + 1);
+        values.reserve(triplets_vector.size());
+        column_index.reserve(triplets_vector.size());
         line_index.push_back(0);
 
-        int count_el = 0;
-        int i = 0; // row index
-        for (auto it: elements_) {
-            while (i < it.i) {
-                line_index.push_back(count_el);
-                i += 1;
+        std::size_t element_counter = 0;
+        std::size_t line_counter = 0;
+        for (const Triplet<Type> &triplet: triplets_vector) {
+            while (line_counter < triplet.i) {
+                line_index.push_back(element_counter);
+                line_counter++;
             }
 
-            if (it.i == i) {
-                values.push_back(it.value_);
-                column_index.push_back(it.j);
-                count_el++;
+            if (triplet.i == line_counter) {
+                values.push_back(triplet.value_);
+                column_index.push_back(triplet.j);
+                element_counter++;
             }
         }
-        line_index.push_back(count_el);
-
-
+        line_index.push_back(element_counter);
     }
 
 
@@ -251,8 +228,9 @@ CSR<Type>::SOR(const std::vector<Type> &b, const std::vector<Type> &initial_gues
 
             for (size_t j = line_index[i]; j < line_index[i + 1]; ++j)
                 if (column_index[j] != i) sum -= values[j] * result[column_index[j]];
+                else diagonal_element = values[j];
 
-            result[i] = (1 - w) * result[i] + w * sum / (*this)(i, i);
+            result[i] = (1 - w) * result[i] + w * sum / diagonal_element;
 
         }
 

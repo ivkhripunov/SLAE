@@ -14,11 +14,11 @@
 
 template<typename Type>
 std::vector<Type>
-SimpleIterationLog(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
-                   const Type &tolerance,
-                   const Type &step) {
+SimpleIteration(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+                const Type &tolerance,
+                const Type &step) {
 
-    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/MPI.txt");
+    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/log/MPI.txt");
     std::size_t counter = 0;
 
     std::vector<Type> r = A * initial_guess - b;
@@ -26,12 +26,14 @@ SimpleIterationLog(const CSR<Type> &A, const std::vector<Type> &b, const std::ve
 
     while (second_norm(r) > tolerance) {
 
-        fout << counter << " " << second_norm(r) << std::endl;
+        fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
         counter++;
 
         result = result - r * step;
         r = A * result - b;
     }
+
+    fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
 
     fout.close();
 
@@ -39,9 +41,9 @@ SimpleIterationLog(const CSR<Type> &A, const std::vector<Type> &b, const std::ve
 
 }
 
-std::vector<std::size_t> calc_indexes_sequence(const std::size_t &R) {
 
-    std::size_t roots_count = std::pow(2, R);
+std::vector<std::size_t> calc_indexes_sequence(const std::size_t &roots_count) {
+
     std::vector<std::size_t> sequence(roots_count);
     sequence[0] = 1;
 
@@ -56,11 +58,11 @@ std::vector<std::size_t> calc_indexes_sequence(const std::size_t &R) {
 }
 
 template<typename Type>
-std::vector<Type> cacl_sequenced_polynom_roots(const std::size_t &R, const Type &min_eigen_value, const Type &max_eigen_value) {
+std::vector<Type>
+cacl_sequenced_polynom_roots(const std::size_t &R, const Type &min_eigen_value, const Type &max_eigen_value) {
 
     std::size_t roots_count = std::pow(2, R);
-    std::vector<std::size_t> sequence(calc_indexes_sequence(R));
-    std::cout << sequence << std::endl;
+    std::vector<std::size_t> sequence(calc_indexes_sequence(roots_count));
 
     std::vector<Type> roots(roots_count);
 
@@ -76,7 +78,8 @@ std::vector<Type> cacl_sequenced_polynom_roots(const std::size_t &R, const Type 
 
     std::vector<Type> sequenced_roots = roots;
     for (std::size_t i = 0; i < roots_count; ++i) {
-        sequenced_roots[i] = 2 / ((max_eigen_value + min_eigen_value) + (max_eigen_value - min_eigen_value) * roots[sequence[i] - 1]);
+        sequenced_roots[i] = 2 / ((max_eigen_value + min_eigen_value) +
+                                  (max_eigen_value - min_eigen_value) * roots[sequence[i] - 1]);
     }
 
 
@@ -89,7 +92,7 @@ MPI_ChebyshevAccelerationLog(const CSR<Type> &A, const std::vector<Type> &b, con
                              const std::size_t &R, const Type &min_eigen_value,
                              const Type &max_eigen_value, const Type &accuracy) {
 
-    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/MPI_CHEB.txt");
+    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/log/MPI_CHEB.txt");
     std::size_t counter = 0;
 
     std::vector<Type> step_array = cacl_sequenced_polynom_roots(R, min_eigen_value, max_eigen_value);
@@ -99,7 +102,8 @@ MPI_ChebyshevAccelerationLog(const CSR<Type> &A, const std::vector<Type> &b, con
 
     while (second_norm(r) > accuracy) {
 
-        fout << counter << " " << second_norm(r) << std::endl;
+        fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
+        counter++;
 
         result = result - r * step_array[counter % 8];
         r = A * result - b;
@@ -107,7 +111,39 @@ MPI_ChebyshevAccelerationLog(const CSR<Type> &A, const std::vector<Type> &b, con
         counter++;
     }
 
+    fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
+
     return result;
 }
 
+
+template<typename Type>
+std::vector<Type>
+FastestGradientDescent(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+                   const Type &tolerance) {
+
+    std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/log/FGD.txt");
+    std::size_t counter = 0;
+
+    std::vector<Type> r = A * initial_guess - b;
+    std::vector<Type> result = initial_guess;
+
+    while (second_norm(r) > tolerance) {
+
+        fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
+        counter++;
+
+        Type step = r * r / (r * (A * r));
+
+        result = result - r * step;
+        r = A * result - b;
+    }
+
+    fout << " " << result[0] << " " << result[1] << " " << result[2] << " " << result[3] << std::endl;
+
+    fout.close();
+
+    return result;
+
+}
 #endif //SLAE_SIMPLEITERATION_H
