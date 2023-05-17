@@ -3,6 +3,7 @@
 # 'lib' is the folder with Google Test sources
 #include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 #add_subdirectory(Google_tests/lib)
+add_subdirectory(eigen)
 
 add_executable(threediagonal_test threediagonal_test.cpp) # здесь название исполняемого файла и файл в котором лежит тест
 add_test(NAME threediagonal_test COMMAND threediagonal_test.cpp)

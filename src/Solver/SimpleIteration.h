@@ -120,7 +120,7 @@ MPI_ChebyshevAccelerationLog(const CSR<Type> &A, const std::vector<Type> &b, con
 template<typename Type>
 std::vector<Type>
 FastestGradientDescent(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
-                   const Type &tolerance) {
+                       const Type &tolerance) {
 
     std::ofstream fout("/home/ivankhripunov/CLionProjects/SLAE/tests/log/FGD.txt");
     std::size_t counter = 0;
@@ -146,4 +146,42 @@ FastestGradientDescent(const CSR<Type> &A, const std::vector<Type> &b, const std
     return result;
 
 }
+
+template<typename Type>
+std::vector<Type> HeavyBall(const CSR<Type> &A, const std::vector<Type> &b, const std::vector<Type> &initial_guess,
+                            const Type &tolerance) {
+
+    std::vector<Type> x_previous = initial_guess, x_current;
+    std::vector<Type> direction(b.size());
+    std::vector<Type> r = A * initial_guess - b;
+
+    const Type first_step = r * r / (r * (A * r));
+
+    x_current = initial_guess - r * first_step;
+
+    unsigned int counter = 0;
+
+    while (second_norm(r) > tolerance) {
+        direction = x_current - x_previous;
+
+        const Type rAr = r * (A * r);
+        const Type rAd = r * (A * direction);
+        const Type dAd = direction * (A * direction);
+        const Type rr = r * r;
+
+        const Type beta = (rr * rAd - r * direction * rAr) / (dAd * rAr - rAd * rAd);
+        const Type alpha = (rr + beta * rAd) / rAr;
+
+        x_previous = x_current;
+        x_current = x_current - alpha * r + beta * direction;
+        r = A * x_current - b;
+
+        counter++;
+    }
+    std::cout << counter;
+
+    return x_current;
+
+}
+
 #endif //SLAE_SIMPLEITERATION_H

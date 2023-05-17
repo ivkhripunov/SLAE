@@ -95,5 +95,35 @@ TEST(Samostoyayelnaya, Task_2) {
     std::vector<double> result_mpi_3 = FastestGradientDescent(A, b, initial, 1e-13);
     std::vector<double> result_mpi_4 = MPI_ChebyshevAccelerationLog(A, b, initial, 3, lambda_min, lambda_max, 1e-13);
     std::vector<double> result_mpi_5 = CG(A, b, initial, 1e-13);
+}
 
+TEST(SLAE_EXAM, Task_4) {
+    CSR<double> A{{{0, 0, 10},
+                  {1, 0, 3},
+                  {2, 0, 6},
+                  {0, 1, 3},
+                  {1, 1, 5},
+                  {2, 1, 1},
+                  {0, 2, 6},
+                  {1, 2, 1},
+                  {2, 2, 8}}, 3, 3};
+
+    std::cout << cacl_sequenced_polynom_roots(3, 2.251314271566045, 15.882409871887806);
+}
+
+TEST(GRADIENT, HeavyBall) {
+    CSR<double> A{{{0, 0, 18}, {1, 1, 21}, {2, 2, 24}, {3, 3, 27}}, 4, 4};
+
+    std::vector<double> b(4, 1);
+
+    std::vector<double> initial(4, 1);
+
+    std::vector<double> result_heavy_ball = HeavyBall(A, b, initial, 1e-13);
+
+    std::vector<double> reference_result = FastestGradientDescent(A, b, initial, 1e-13);
+
+    ASSERT_NEAR(reference_result[0], result_heavy_ball[0], 1e-13);
+    ASSERT_NEAR(reference_result[1], result_heavy_ball[1], 1e-13);
+    ASSERT_NEAR(reference_result[2], result_heavy_ball[2], 1e-13);
+    ASSERT_NEAR(reference_result[3], result_heavy_ball[3], 1e-13);
 }
